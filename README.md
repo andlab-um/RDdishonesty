@@ -1,4 +1,4 @@
-# Reward and self-consistency: Dissecting the role of social brain and cognitive control in moral decisions <img src="https://github.com/andlab-um/RDdishonesty/main/demo.pdf" align="right" width="361px">
+# Reward and self-consistency: Dissecting the role of social brain and cognitive control in moral decisions <img src="https://github.com/andlab-um/RDdishonesty/main/demo.png" align="right" width="361px">
 
 [![GitHub repo size](https://img.shields.io/github/repo-size/andlab-um/IMQ?color=brightgreend&logo=github)](https://github.com/andlab-um/IMQ)
 [![Twitter URL](https://img.shields.io/twitter/url?label=%40ANDlab3&style=social&url=https%3A%2F%2Ftwitter.com%ANDlab3)](https://twitter.com/ANDlab3)
