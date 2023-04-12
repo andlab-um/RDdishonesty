@@ -97,6 +97,5 @@ ___
 
 ## Data
 
-- The behavior data for the experiment are in `beha_data.csv`
 - All fMRI data with descriptions of the variables is put in openfmri
 
