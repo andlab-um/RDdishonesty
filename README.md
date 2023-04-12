@@ -19,98 +19,78 @@ ___
 **This repository contains:**
 ```
 root
- ├── dishonesty_beha               
- │    ├── OT_questionnaire data.xlsx  # behavior data  
- │    └── fmri_data_link.md          
- ├── code                
- │    ├── R
- │    │    ├── PCAcode.r
- │    │    ├── analysis.r
- │    │    ├── data.csv
- │    │    ├── pca.csv
- │    │    └── pp.r
- │    └── Python
- │    │    ├── pca.py
- │    │    ├── questionnaier.py
- │    │    ├── roi_signal_change_aal.py
- │    │    └── tsne.py
- ├──  models            
- │    ├── MATLAB
- │    │    ├── TDTmvpa.m
- │    │    ├── mvpaR_main.m
- │    │    └── parsave.m
- │    ├── Python
- │    │    ├── mvpaR.py
- │    │    ├── mvpa_perm_all_cond.py
- │    │    ├── mvpa_perm_all_cond_neurosynth.py
- │    │    ├── rsa_roi.py
- │    │    └── images
- │    │        ├── OT_masked_accuracies.nii
- │    │        ├── OT_p_adjusted.nii
- │    │        ├── OT_p_unadjusted.nii
- │    │        ├── PL_masked_accuracies.nii
- │    │        ├── PL_p_adjusted.nii
- │    │        ├── PL_p_unadjusted.nii
- │    │        ├── diff_masked_accuracies.nii
- │    │        ├── diff_p_adjusted.nii
- │    │        └── diff_p_unadjusted.nii
- │    └── README.md
- ├──  MVPA_plots         
- │    ├── Wholebrain
- │    │    ├── niis
- │    │         ├── OT_masked_accuracies.nii
- │    │         ├── OT_p_adjusted.nii
- │    │         ├── OT_p_unadjusted.nii
- │    │         ├── PL_masked_accuracies.nii
- │    │         ├── PL_p_adjusted.nii
- │    │         ├── PL_p_unadjusted.nii
- │    │         ├── diff_masked_accuracies.nii
- │    │         ├── diff_p_adjusted.nii
- │    │         └── diff_p_unadjusted.nii
- │    │    ├── OT_lh_caud.jpg
- │    │    ├── OT_lh_lat.jpg
- │    │    ├── OT_lh_med.jpg
- │    │    ├── OT_lh_ros.jpg
- │    │    ├── OT_rh_caud.jpg
- │    │    ├── OT_rh_lat.jpg
- │    │    ├── OT_rh_med.jpg
- │    │    ├── OT_rh_ros.jpg
- │    │    ├── PL_lh_caud.jpg
- │    │    ├── PL_lh_lat.jpg
- │    │    ├── PL_lh_med.jpg
- │    │    ├── PL_lh_ros.jpg
- │    │    ├── PL_rh_caud.jpg
- │    │    ├── PL_rh_lat.jpg
- │    │    ├── PL_rh_med.jpg
- │    │    ├── PL_rh_ros.jpg
- │    │    ├── diff_lh_caud.jpg
- │    │    ├── diff_lh_lat.jpg
- │    │    ├── diff_lh_med.jpg
- │    │    ├── diff_lh_ros.jpg
- │    │    ├── diff_rh_caud.jpg
- │    │    ├── diff_rh_lat.jpg
- │    │    ├── diff_rh_med.jpg
- │    │    └── diff_rh_ros.jpg
- │    └── Neurosynth
- │    │    ├── niis
- │    │         ├── OT_masked_accuracies.nii
- │    │         ├── OT_p_adjusted.nii
- │    │         ├── OT_p_unadjusted.nii
- │    │         ├── PL_masked_accuracies.nii
- │    │         ├── PL_p_adjusted.nii
- │    │         ├── PL_p_unadjusted.nii
- │    │         ├── diff_masked_accuracies.nii
- │    │         ├── diff_p_adjusted.nii
- │    │         └── diff_p_unadjusted.nii
- │    │    ├── diff_lh_caud.jpg
- │    │    ├── diff_lh_lat.jpg
- │    │    ├── diff_lh_med.jpg
- │    │    ├── diff_lh_ros.jpg
- │    │    ├── diff_rh_caud.jpg
- │    │    ├── diff_rh_lat.jpg
- │    │    ├── diff_rh_med.jpg
- │    │    └── diff_rh_ros.jpg
- └── README.md
+├── README.md
+├── demo.png
+├── dishonesty_behav
+│   ├── 1.behavior_vis.R
+│   ├── 2.behavior_brain.R
+│   ├── 3.ddmComparison.R
+│   ├── 4.MTanalysis.R
+│   └── behav_ddm
+│       ├── fitDDMs
+│       │   ├── latDDM_Rcpp.cpp
+│       │   ├── mDDM_Rcpp.cpp
+│       │   ├── sDDM_Rcpp.cpp
+│       │   └── tDDM_Rcpp.cpp
+│       ├── fitting_code
+│       │   ├── latDDM.R
+│       │   ├── mDDM.R
+│       │   ├── sDDM.R
+│       │   └── tDDM.R
+│       └── parameter_recovery
+│           ├── fitSimulatedData
+│           │   ├── fit_latDDM_tSims.R
+│           │   ├── fit_mDDM_tSims.R
+│           │   ├── fit_sDDM_tSims.R
+│           │   ├── fit_tDDM_tSims.R
+│           │   ├── results_latDDM_tSims
+│           │   │   ├── simFits_latFit_tSim.RData
+│           │   │   └── simFits_latFit_tSim.csv
+│           │   ├── results_mDDM_tSims
+│           │   │   ├── simFits_mFit_tSim.RData
+│           │   │   └── simFits_mFit_tSim.csv
+│           │   ├── results_sDDM_tSims
+│           │   │   ├── simFits_sFit_tSim.RData
+│           │   │   └── simFits_sFit_tSim.csv
+│           │   └── results_tDDM_tSims
+│           │       ├── simFits_tFit_tSim.RData
+│           │       └── simFits_tFit_tSim.csv
+│           ├── simDDMs
+│           │   ├── simulate_mDDM_lrt_Rcpp.cpp
+│           │   └── simulate_tDDM_lrt_Rcpp.cpp
+│           └── simulateRT
+│               ├── simulate_mDDM.R
+│               └── simulate_tDDM.R
+└── dishonesty_fMRI
+    ├── 1.GLM
+    │   ├── firstLevel.m
+    │   └── secondLevel.m
+    ├── 2.ROIextraction
+    │   ├── 1.meanbeta.ipynb
+    │   └── 2.meanbeta_vis.R
+    ├── 3.time_courses
+    │   ├── Functions
+    │   │   ├── ci95plotmulticoloffalpha.m
+    │   │   ├── concatenate.m
+    │   │   ├── fill_around_line.m
+    │   │   ├── fill_around_line_multicol.m
+    │   │   ├── fillsteplotcol.m
+    │   │   ├── steplotmulticoloffalpha.m
+    │   │   └── violaPoints.m
+    │   ├── mask_reslice.m
+    │   ├── remove_confounds.m
+    │   ├── time_course_beta_2attributes.m
+    │   ├── time_course_beta_liexattributes.m
+    │   └── upsample_fmri.m
+    ├── 4.RSA
+    │   ├── 1.ISRSA-prepdata.ipynb
+    │   ├── 2.run_ISRSA.ipynb
+    │   ├── 2.run_ISRSA_questionnaire.ipynb
+    │   ├── 3.plot_results.ipynb
+    │   └── 3.plot_results_ques.ipynb
+    └── fc_RDM.Rmd
+
+
 ```
 **Note 1**: Before running the codes, change the directories to the path of corresponding locations. <br />
 **Note 2**: All fMRI data with descriptions of the variables is put in openfmri. <br />
