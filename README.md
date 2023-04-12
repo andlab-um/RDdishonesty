@@ -92,8 +92,6 @@ root
 
 
 ```
-**Note 1**: Before running the codes, change the directories to the path of corresponding locations. <br />
-**Note 2**: All fMRI data with descriptions of the variables is put in openfmri. <br />
 
 ___
 
