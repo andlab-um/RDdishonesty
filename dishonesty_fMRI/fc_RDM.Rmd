@@ -1,0 +1,481 @@
+---
+output: html_document
+editor_options: 
+chunk_output_type: console
+# RDM regression for FC
+# author: Xinyi Julia Xu
+# 2022.11.20
+# xinyi_x@outlook.com
+---
+
+# Initialize workspace
+
+```{r}
+rm(list=ls())
+path="/Users/orlacamus/Desktop/projects/dishonesty/fMRI/dishonesty_fMRI"
+# Install required packages if necessary:
+want = c("data.table", "lme4", "Matrix","ez","ggplot2","dplyr",'ggpubr','patchwork','tidyr',' reticulate','tidyverse','readxl')
+have = want %in% rownames(installed.packages())
+if ( any(!have) ) { install.packages( want[!have] ) }
+# Now load them all
+lapply(want, require, character.only = TRUE)
+library(reticulate)
+library(svglite)
+
+```
+
+```{r, setup, include=FALSE}
+knitr::opts_knit$set(root.dir = path)
+```
+
+```{r}
+subL = c(104,105,108,109,110,111,112,113,114,115,117,120,121,122,124,125,126,127,130,131,133,134,135,137,138,139,140)
+
+dt3 <- readMat("6.FC/SBC_01/AllSubjects/lie_Session3/ROI.mat")
+dt6 <- readMat("6.FC/SBC_01/AllSubjects/hon_Session3/ROI.mat")
+
+ddm=read_csv('/Users/orlacamus/Desktop/projects/dishonesty/fMRI/dishonesty_behav/DDM-related/fitting_code/results_tddm/fits_all_tddm.csv')
+ddm=ddm[ddm$sub_nr %in% subL,]
+
+
+dt <- fread("/users/orlacamus/desktop/projects/dishonesty/fMRI/dishonesty_behav/behav_summary.csv")
+a=which(colnames(dt)=='error-correct')
+colnames(dt)[a] <- 'error.correct'
+dt = dt[dt$sub %in% subL,]
+dataBeh = dt[,c('sub',
+                 'run',
+                 'ses',
+                 'ind',
+                 'error.correct',
+                 'former_diff',
+                 'lie',
+                 'RT',
+                 'MAD',
+                 'AD',
+                 'AUC')]
+
+
+# Reclass variables
+dataBeh <- within(dataBeh, {
+  sub <- as.integer(sub)
+  RT <- as.numeric(RT)
+  index <- as.integer(ind)
+  run <- as.integer(run)
+  ses <- as.integer(ses)
+  money_diff <- as.integer(error.correct) 
+  consis_diff <- as.integer(former_diff) 
+  lie <- as.numeric(lie)
+  MAD <- as.numeric(MAD)
+  AD <- as.numeric(AD)
+  AUC <- as.numeric(AUC)
+})
+
+
+
+MT=dataBeh %>% group_by(sub,ses) %>%
+  summarise(MAD = mean(MAD),AD = mean(AD),AUC = mean(AUC))
+MT=MT[MT$ses==3,]
+
+
+lieProp <- dataBeh %>% group_by(sub,lie) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = cnt / sum(cnt)) %>%
+  arrange(freq)
+
+lieProp = lieProp[lieProp$lie==1,]
+
+lieProp <-lieProp[order(lieProp$sub),]
+
+
+dq <- fread("/users/orlacamus/desktop/projects/dishonesty/fMRI/dishonesty_behav/RD_questionnaire_summary.csv",fill=TRUE)
+ques = dq[dq$subno %in% subL,]
+
+
+ROIs=c(165,166,168,169,170,171,172,173,174,175)
+ROIsname=c('SMA','dlPFC','vmPFC','BA32','ANG','cc_z10','dACC','sgACC','OFC','ventral_striatum')
+```
+
+```{r}
+for (i in c(166)){# dlPFC
+  
+  fc_lie3=data.frame(dt3[["ROI"]][[16*i-14]])
+  fc_hon3=data.frame(dt6[["ROI"]][[16*i-14]])
+  fc=fc_lie3
+  for (j in c(172)){ #dacc
+    temp_dacc=data.frame(subL)
+    temp_dacc$value=fc[,j]
+    temp_dacc$condition='dacc'
+  }
+  for (j in c(174)){ #OFC
+    temp_OFC=data.frame(subL)
+    temp_OFC$value=fc[,j]
+    temp_OFC$condition='OFC'
+  }
+  
+  for (j in c(175)){ #vs
+    temp_vs=data.frame(subL)
+    temp_vs$value=fc[,j]
+    temp_vs$condition='vs'
+  }
+  for (j in c(169)){ #prACC
+    temp_prACC=data.frame(subL)
+    temp_prACC$value=fc[,j]
+    temp_prACC$condition='prACC'
+  }
+  
+  
+}
+temp=data.frame(subL)
+temp$OFC=temp_OFC$value
+temp$dacc=temp_dacc$value
+temp$vs=temp_vs$value
+temp$prACC=temp_prACC$value
+```
+
+```{python}
+from scipy.spatial.distance import pdist
+import pandas as pd
+dist_ddm=pdist(r.ddm.loc[:,['drate_m','drate_c']],metric='seuclidean')
+dist_mon=pdist(r.ddm.loc[:,['drate_m']],metric='seuclidean')
+dist_con=pdist(r.ddm.loc[:,['drate_c']],metric='seuclidean')
+
+dist_dacc=pdist(r.temp.loc[:,['dacc']],metric='seuclidean')
+dist_OFC=pdist(r.temp.loc[:,['OFC']],metric='seuclidean')
+dist_vs=pdist(r.temp.loc[:,['vs']],metric='seuclidean')
+dist_prACC=pdist(r.temp.loc[:,['prACC']],metric='seuclidean')
+
+dist_fc=pdist(r.temp.loc[:,['OFC','dacc']],metric='seuclidean')
+dist_fc_vs=pdist(r.temp.loc[:,['vs','dacc']],metric='seuclidean')
+
+dist_lierate=pdist(r.lieProp.loc[:,['freq']],metric='seuclidean')
+
+dist_auc=pdist(r.MT.loc[:,['AUC']],metric='seuclidean')
+
+dist_SVO=pdist(r.ques.loc[:,['SVO']],metric='seuclidean')
+dist_est=pdist(r.ques.loc[:,['esteem']],metric='seuclidean')
+dist_IRI=pdist(r.ques.loc[:,['IRI']],metric='seuclidean')
+dist_ques2=pdist(r.ques.loc[:,['SVO','IRI']],metric='seuclidean')
+dist_ques3=pdist(r.ques.loc[:,['SVO','IRI','esteem']],metric='seuclidean')
+```
+
+```{r}
+reticulate::repl_python()
+```
+
+
+```{python}
+
+```
+
+
+```{r}
+
+```
+
+
+
+
+```{r}
+shapiro.test(lieProp$freq)
+```
+
+
+
+
+```{r}
+#fit=lm(py$dist_dacc~py$dist_con+py$dist_mon+py$dist_lierate+py$dist_auc+py$dist_SVO+py$dist_est+py$dist_IRI)
+fit=lm(py$dist_prACC~py$dist_con+py$dist_mon+py$dist_SVO+py$dist_IRI)
+a=summary(fit)
+c=confint(fit)
+fit_prACC=data.frame(coef(a))
+fit_prACC=fit_prACC[2:5,c(1,4)]
+colnames(fit_prACC)=c('est','pval')
+#rownames(fit_prACC)=c('con','mon','SVO','IRI')
+fit_prACC$name=c('con','mon','SVO','IRI')
+fit_prACC$mark_sig=c('green','black','black','black')
+fit_prACC$low=c[2:5,'2.5 %']
+fit_prACC$high=c[2:5,'97.5 %']
+```
+
+
+
+
+
+
+
+```{r}
+fit=lm(py$dist_vs~py$dist_con+py$dist_mon+py$dist_SVO+py$dist_IRI)
+a=summary(fit)
+c=confint(fit)
+fit_vs=data.frame(coef(a))
+fit_vs=fit_vs[2:5,c(1,4)]
+colnames(fit_vs)=c('est','pval')
+#rownames(fit_vs)=c('con','mon','SVO','IRI')
+fit_vs$name=c('con','mon','SVO','IRI')
+fit_vs$mark_sig=c('black','purple','black','yellow')
+fit_vs$low=c[2:5,'2.5 %']
+fit_vs$high=c[2:5,'97.5 %']
+```
+
+
+
+
+
+```{r}
+reticulate::repl_python()
+```
+
+
+```{python}
+from scipy.spatial.distance import squareform
+sq_prACC=squareform(dist_prACC)
+sq_vs=squareform(dist_vs)
+sq_con=squareform(dist_con)
+sq_mon=squareform(dist_mon)
+sq_SVO=squareform(dist_SVO)
+sq_IRI=squareform(dist_IRI)
+```
+
+
+
+```{r}
+sq_prACC=data.frame(py$sq_prACC)
+sq_vs=data.frame(py$sq_vs)
+sq_con=data.frame(py$sq_con)
+sq_mon=data.frame(py$sq_mon)
+sq_IRI=data.frame(py$sq_IRI)
+sq_SVO=data.frame(py$sq_SVO)
+
+```
+
+
+```{r}
+gg <- list(
+  theme_bw(),
+  theme(plot.title = element_text(hjust = 0.5, size=13),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.spacing = unit(0.75, "lines"),
+        legend.box.spacing = unit(0.5, "lines"),
+        legend.margin = margin(c(0, 0, 0, 0), unit='lines'))
+)
+
+ggstyle <- list(
+  gg,
+  geom_tile(color = "black"),
+  scale_x_discrete(name="subjects"),
+  scale_y_discrete(name="subjects"),
+  #guides(fill = guide_colourbar(title.position="bottom", title.hjust = 0.5)),
+  coord_fixed(),
+  theme(plot.title = element_text(hjust = 0.5, size=30, margin=margin(0, 0, 1, 0)),
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "bottom",
+        legend.margin = margin(10, 1, 1, 1),
+        strip.background = element_blank(),
+        strip.text = element_text(size=11),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        plot.margin = unit(c(0.2, 0.1, 0.2, 0.1), "cm"))
+)
+
+```
+
+
+```{r}
+name='dlPFC-prACC'
+ggRDM <- sq_prACC %>%
+    dplyr::mutate(key1 = row_number()) %>%
+    gather(key2, value, X1:X27) %>%
+    dplyr::mutate(key2 = str_sub(key2, 2, -1),
+           key2 = as.numeric(key2),
+           key1 = factor(key1),
+           key2 = factor(key2))
+
+f=ggplot(ggRDM, aes(x=key1, y=key2, fill=value)) +
+    theme(axis.title=element_blank()) + 
+    scale_fill_distiller(palette = "Blues",guide = NULL)+
+    ggtitle(paste0(name,' RDM')) +
+    ggstyle
+f
+#ggsave(file=paste0('/Users/orlacamus/Downloads/',name,"-matrix.png"), plot=f, width=5, height=5)
+
+
+```
+
+```{r}
+name='dlPFC-VS'
+ggRDM <- sq_vs %>%
+    dplyr::mutate(key1 = row_number()) %>%
+    gather(key2, value, X1:X27) %>%
+    dplyr::mutate(key2 = str_sub(key2, 2, -1),
+           key2 = as.numeric(key2),
+           key1 = factor(key1),
+           key2 = factor(key2))
+
+f=ggplot(ggRDM, aes(x=key1, y=key2, fill=value)) +
+    theme(axis.title=element_blank()) + 
+    scale_fill_distiller(palette = "Blues",guide = NULL)+
+    ggtitle(paste0(name,' RDM')) +
+    ggstyle
+f
+
+#ggsave(file=paste0('/Users/orlacamus/Downloads/',name,"-matrix.png"), plot=f, width=5, height=5)
+
+
+```
+
+```{r}
+name='consistency'
+ggRDM <- sq_con %>%
+    dplyr::mutate(key1 = row_number()) %>%
+    gather(key2, value, X1:X27) %>%
+    dplyr::mutate(key2 = str_sub(key2, 2, -1),
+           key2 = as.numeric(key2),
+           key1 = factor(key1),
+           key2 = factor(key2))
+
+f=ggplot(ggRDM, aes(x=key1, y=key2, fill=value)) +
+    theme(axis.title=element_blank()) + 
+    scale_fill_gradient(high='white',low='#548434',guide = NULL)+
+    ggtitle(paste0(name,' RDM')) +
+    ggstyle
+f
+
+#ggsave(file=paste0('/Users/orlacamus/Downloads/',name,"-matrix.png"), plot=f, width=5, height=5)
+
+
+```
+
+
+```{r}
+name='money'
+ggRDM <- sq_mon %>%
+    dplyr::mutate(key1 = row_number()) %>%
+    gather(key2, value, X1:X27) %>%
+    dplyr::mutate(key2 = str_sub(key2, 2, -1),
+           key2 = as.numeric(key2),
+           key1 = factor(key1),
+           key2 = factor(key2))
+
+f=ggplot(ggRDM, aes(x=key1, y=key2, fill=value)) +
+    theme(axis.title=element_blank()) + 
+    scale_fill_gradient(high='white',low='#74379b',guide = NULL)+
+    ggtitle(paste0(name,' RDM')) +
+    ggstyle
+f
+
+#ggsave(file=paste0('/Users/orlacamus/Downloads/',name,"-matrix.png"), plot=f, width=5, height=5)
+
+
+```
+
+
+```{r}
+name='IRI'
+ggRDM <- sq_IRI %>%
+    dplyr::mutate(key1 = row_number()) %>%
+    gather(key2, value, X1:X27) %>%
+    dplyr::mutate(key2 = str_sub(key2, 2, -1),
+           key2 = as.numeric(key2),
+           key1 = factor(key1),
+           key2 = factor(key2))
+
+f=ggplot(ggRDM, aes(x=key1, y=key2, fill=value)) +
+    theme(axis.title=element_blank()) + 
+    scale_fill_gradient(high='white',low='#59cc7f',guide = NULL)+
+    ggtitle(paste0(name,' RDM')) +
+    ggstyle
+f
+
+#ggsave(file=paste0('/Users/orlacamus/Downloads/',name,"-matrix.png"), plot=f, width=5, height=5)
+
+
+```
+
+
+
+```{r}
+name='SVO'
+ggRDM <- sq_SVO %>%
+    dplyr::mutate(key1 = row_number()) %>%
+    gather(key2, value, X1:X27) %>%
+    dplyr::mutate(key2 = str_sub(key2, 2, -1),
+           key2 = as.numeric(key2),
+           key1 = factor(key1),
+           key2 = factor(key2))
+
+f=ggplot(ggRDM, aes(x=key1, y=key2, fill=value)) +
+    theme(axis.title=element_blank()) + 
+    scale_fill_gradient(high='white',low='#fce40b',guide = NULL)+
+    ggtitle(paste0(name,' RDM')) +
+    ggstyle
+f
+
+#ggsave(file=paste0('/Users/orlacamus/Downloads/',name,"-matrix.png"), plot=f, width=5, height=5)
+
+
+```
+
+
+
+
+```{r}
+
+f=ggplot(data=fit_prACC,aes(x=est, y=name, color=mark_sig)) +
+gg +
+# Add background shading to help group betas together
+geom_rect(xmin=-Inf, xmax=Inf, ymin=3.5, ymax=5,
+          fill="#f0f0f0", color = NA) +
+# Reference line at null effect 0
+geom_vline(xintercept = 0, linetype = "dotted", size = 0.2) +
+# Add beta estimates, CIs, and p-values
+geom_errorbarh(aes(xmin=low, xmax=high),
+               size = 0.8, height = 0.5,
+               position = position_nudge(y = 0.05)) +
+geom_point(position = position_nudge(y = 0.05)) +
+#geom_text(aes(label=paste0('p=',pval), x=(low + high)/2),
+#          position = position_nudge(y = -0.2),
+#          size = 2.5, color = "black") +
+# Make pretty
+xlab("Median Beta Estimate (a.u.)") +
+scale_y_discrete(name = NULL, limits=c("SVO","IRI","mon",'con'),labels=c('SVO','IRI','reward','consistency')) +
+scale_color_manual(values = c("black",'#548434'),guide=NULL)+
+theme(axis.text.y = element_text(size=20),
+      axis.text.x = element_text(size=20),
+      axis.title.x = element_text(size=20))
+f
+ggsave(file=paste0('/Users/orlacamus/Downloads/prACC-regres.png'), plot=f, width=7, height=5)
+```
+
+
+
+```{r}
+
+f=ggplot(data=fit_vs,aes(x=est, y=name, color=mark_sig)) +
+gg +
+# Add background shading to help group betas together
+geom_rect(xmin=-Inf, xmax=Inf, ymin=2.5, ymax=3.5,
+          fill="#f0f0f0", color = NA) +
+# Reference line at null effect 0
+geom_vline(xintercept = 0, linetype = "dotted", size = 0.2) +
+# Add beta estimates, CIs, and p-values
+geom_errorbarh(aes(xmin=low, xmax=high),
+               size = 0.8, height = 0.5,
+               position = position_nudge(y = 0.05)) +
+geom_point(position = position_nudge(y = 0.05)) +
+#geom_text(aes(label=paste0('p=',pval), x=(low + high)/2),
+#          position = position_nudge(y = -0.2),
+#          size = 2.5, color = "black") +
+# Make pretty
+xlab("Median Beta Estimate (a.u.)") +
+scale_y_discrete(name = NULL, limits=c("SVO","IRI","mon",'con'),labels=c('SVO','IRI','reward','consistency')) +
+scale_color_manual(values = c("black",'#74379b', "#59cc7f"),guide=NULL)+
+theme(axis.text.y = element_text(size=20),
+      axis.text.x = element_text(size=20),
+      axis.title.x = element_text(size=20))
+f
+ggsave(file=paste0('/Users/orlacamus/Downloads/vs-regres.png'), plot=f, width=7, height=5)
+```
