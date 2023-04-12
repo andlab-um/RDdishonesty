@@ -2,7 +2,7 @@
 
 [![GitHub repo size](https://img.shields.io/github/repo-size/andlab-um/IMQ?color=brightgreend&logo=github)](https://github.com/andlab-um/IMQ)
 [![Twitter URL](https://img.shields.io/twitter/url?label=%40ANDlab3&style=social&url=https%3A%2F%2Ftwitter.com%ANDlab3)](https://twitter.com/ANDlab3)
-[![Twitter URL](https://img.shields.io/twitter/url?label=%40xuxinyi_julia&style=social&url=https%3A%2F%2Ftwitter.com%2Fxuxinyi_julia])(https://twitter.com/xuxinyi_julia)
+[![Twitter URL](https://img.shields.io/twitter/url?label=%40xuxinyi_julia&style=social&url=https%3A%2F%2Ftwitter.com%2Fxuxinyi_julia)](https://twitter.com/xuxinyi_julia)
 
 
 ## Analysis Code
