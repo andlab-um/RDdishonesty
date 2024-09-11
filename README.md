@@ -19,76 +19,15 @@ ___
 **This repository contains:**
 ```
 root
-├── README.md
-├── demo.png
-├── dishonesty_behav
-│   ├── 1.behavior_vis.R
-│   ├── 2.behavior_brain.R
-│   ├── 3.ddmComparison.R
-│   ├── 4.MTanalysis.R
-│   └── behav_ddm
-│       ├── fitDDMs
-│       │   ├── latDDM_Rcpp.cpp
-│       │   ├── mDDM_Rcpp.cpp
-│       │   ├── sDDM_Rcpp.cpp
-│       │   └── tDDM_Rcpp.cpp
-│       ├── fitting_code
-│       │   ├── latDDM.R
-│       │   ├── mDDM.R
-│       │   ├── sDDM.R
-│       │   └── tDDM.R
-│       └── parameter_recovery
-│           ├── fitSimulatedData
-│           │   ├── fit_latDDM_tSims.R
-│           │   ├── fit_mDDM_tSims.R
-│           │   ├── fit_sDDM_tSims.R
-│           │   ├── fit_tDDM_tSims.R
-│           │   ├── results_latDDM_tSims
-│           │   │   ├── simFits_latFit_tSim.RData
-│           │   │   └── simFits_latFit_tSim.csv
-│           │   ├── results_mDDM_tSims
-│           │   │   ├── simFits_mFit_tSim.RData
-│           │   │   └── simFits_mFit_tSim.csv
-│           │   ├── results_sDDM_tSims
-│           │   │   ├── simFits_sFit_tSim.RData
-│           │   │   └── simFits_sFit_tSim.csv
-│           │   └── results_tDDM_tSims
-│           │       ├── simFits_tFit_tSim.RData
-│           │       └── simFits_tFit_tSim.csv
-│           ├── simDDMs
-│           │   ├── simulate_mDDM_lrt_Rcpp.cpp
-│           │   └── simulate_tDDM_lrt_Rcpp.cpp
-│           └── simulateRT
-│               ├── simulate_mDDM.R
-│               └── simulate_tDDM.R
-└── dishonesty_fMRI
-    ├── 1.GLM
-    │   ├── firstLevel.m
-    │   └── secondLevel.m
-    ├── 2.ROIextraction
-    │   ├── 1.meanbeta.ipynb
-    │   └── 2.meanbeta_vis.R
-    ├── 3.time_courses
-    │   ├── Functions
-    │   │   ├── ci95plotmulticoloffalpha.m
-    │   │   ├── concatenate.m
-    │   │   ├── fill_around_line.m
-    │   │   ├── fill_around_line_multicol.m
-    │   │   ├── fillsteplotcol.m
-    │   │   ├── steplotmulticoloffalpha.m
-    │   │   └── violaPoints.m
-    │   ├── mask_reslice.m
-    │   ├── remove_confounds.m
-    │   ├── time_course_beta_2attributes.m
-    │   ├── time_course_beta_liexattributes.m
-    │   └── upsample_fmri.m
-    ├── 4.RSA
-    │   ├── 1.ISRSA-prepdata.ipynb
-    │   ├── 2.run_ISRSA.ipynb
-    │   ├── 2.run_ISRSA_questionnaire.ipynb
-    │   ├── 3.plot_results.ipynb
-    │   └── 3.plot_results_ques.ipynb
-    └── fc_RDM.Rmd
+.
+├── 1.GLM1.m
+├── 2.hddm
+│   └── hddm_model_estimation_check5.ipynb
+└── 3.ISRSA
+    ├── 1.BrainDist.ipynb
+    ├── 2.run_IS-RSA.ipynb
+    └── 3.PlotResults.ipynb
+
 
 
 ```
